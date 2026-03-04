@@ -1,0 +1,21 @@
+# Learn more about configuring your Customer account UI extension:
+# https://shopify.dev/api/customer-account-ui-extensions/unstable/configuration
+
+api_version = "2026-01"
+
+[[extensions]]
+name = "return-pickup-button"
+handle = "return-pickup-button"
+type = "ui_extension"
+uid = "069c6744-04ba-eb22-7753-43eb5d4d5b94d0f5edbf"
+
+[[extensions.targeting]]
+module = "./src/OrderStatusBlock.jsx"
+target = "customer-account.order-status.block.render"
+
+[extensions.capabilities]
+api_access = true
+network_access = true
+
+[[extensions.network_access.allowed_domains]]
+domain = "angle-mortality-lowest-jeff.trycloudflare.com"
