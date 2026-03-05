@@ -4,9 +4,10 @@ import "@shopify/ui-extensions/preact";
 import { render } from "preact";
 import { useEffect, useMemo, useState } from "preact/hooks";
 
-const API_BASE = "https://angle-mortality-lowest-jeff.trycloudflare.com";
+/** Backend API (Render) */
+const API_BASE = "https://noire-returns-app.onrender.com";
 
-/** Pagina ta */
+/** Pagina ta Shopify */
 const PICKUP_PAGE_URL = "https://noire-swimwear.ro/pages/retur-pick-up";
 
 export default async () => {
@@ -88,7 +89,6 @@ function Extension() {
   }, [shop, isRO, orderId, getSessionToken]);
 
   const handleClick = () => {
-    // Deschide în același tab
     window.open(PICKUP_PAGE_URL, "_self");
   };
 

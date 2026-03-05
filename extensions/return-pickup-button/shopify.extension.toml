@@ -18,4 +18,4 @@ api_access = true
 network_access = true
 
 [[extensions.network_access.allowed_domains]]
-domain = "angle-mortality-lowest-jeff.trycloudflare.com"
+domain = "noire-returns-app.onrender.com"
