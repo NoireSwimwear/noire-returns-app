@@ -1,7 +1,6 @@
 // extensions/return-pickup-button/src/OrderStatusBlock.jsx
 
-import "@shopify/ui-extensions/preact";
-import { render } from "preact";
+import { render } from "@shopify/ui-extensions/preact";
 import { useEffect, useMemo, useState } from "preact/hooks";
 
 /** Backend API (Render) */
@@ -10,9 +9,7 @@ const API_BASE = "https://noire-returns-app.onrender.com";
 /** Pagina ta Shopify */
 const PICKUP_PAGE_URL = "https://noire-swimwear.ro/pages/retur-pick-up";
 
-export default async () => {
-  render(<Extension />, document.body);
-};
+render("customer-account.order-status.block.render", () => <Extension />);
 
 function Extension() {
   const shop =
@@ -70,7 +67,7 @@ function Extension() {
         });
 
         const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error();
+        if (!res.ok) throw new Error("Request failed");
 
         if (!cancelled) {
           setHasReturnInProgress(Boolean(data?.hasReturnInProgress));
