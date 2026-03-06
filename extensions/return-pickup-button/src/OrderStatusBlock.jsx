@@ -1,12 +1,8 @@
-// extensions/return-pickup-button/src/OrderStatusBlock.jsx
 import "@shopify/ui-extensions/preact";
 import { render } from "preact";
 import { useEffect, useMemo, useState } from "preact/hooks";
 
-/** Backend API (Render) */
 const API_BASE = "https://noire-returns-app.onrender.com";
-
-/** Pagina ta Shopify */
 const PICKUP_PAGE_URL = "https://noire-swimwear.ro/pages/retur-pick-up";
 
 export default async () => {
@@ -20,13 +16,7 @@ function Extension() {
   const [loading, setLoading] = useState(true);
   const [hasReturnInProgress, setHasReturnInProgress] = useState(false);
 
-  const countryCode =
-    shop?.localization?.country?.value?.isoCode ||
-    shop?.localization?.country?.isoCode ||
-    shop?.localization?.country?.code ||
-    shop?.localization?.country?.value?.code ||
-    "unknown";
-
+  const countryCode = shop?.localization?.country?.value?.isoCode || "unknown";
   const isRO = countryCode === "RO";
 
   const order = shop?.order?.value || null;
@@ -51,35 +41,45 @@ function Extension() {
         }
 
         const token = await getSessionToken();
+
         if (!token) {
           if (!cancelled) setHasReturnInProgress(false);
           return;
         }
 
-        const url = `${API_BASE}/api/returns/check?orderId=${encodeURIComponent(orderId)}`;
-
-        const res = await fetch(url, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
+        const res = await fetch(
+          `${API_BASE}/api/returns/check?orderId=${encodeURIComponent(orderId)}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: "application/json",
+            },
           },
-        });
+        );
 
         const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error();
+
+        if (!res.ok) {
+          throw new Error("Failed to check return status");
+        }
 
         if (!cancelled) {
           setHasReturnInProgress(Boolean(data?.hasReturnInProgress));
         }
       } catch {
-        if (!cancelled) setHasReturnInProgress(false);
+        if (!cancelled) {
+          setHasReturnInProgress(false);
+        }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
     }
 
     run();
+
     return () => {
       cancelled = true;
     };
@@ -89,7 +89,9 @@ function Extension() {
     window.open(PICKUP_PAGE_URL, "_self");
   };
 
-  if (loading || !isRO || !hasReturnInProgress) return null;
+  if (loading || !isRO || !hasReturnInProgress) {
+    return null;
+  }
 
   return (
     <s-stack
@@ -100,6 +102,7 @@ function Extension() {
     >
       <s-stack gap="base">
         <s-text>Poți programa ridicarea coletului prin Fan Courier.</s-text>
+
         <s-button variant="primary" onClick={handleClick}>
           Programează ridicarea coletului
         </s-button>

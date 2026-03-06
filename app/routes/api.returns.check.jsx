@@ -8,20 +8,6 @@ function corsHeaders() {
   };
 }
 
-export async function action({ request }) {
-  if (request.method === "OPTIONS") {
-    return new Response(null, {
-      status: 204,
-      headers: corsHeaders(),
-    });
-  }
-
-  return json(
-    { error: "Method not allowed" },
-    { status: 405, headers: corsHeaders() },
-  );
-}
-
 export async function loader({ request }) {
   const url = new URL(request.url);
   const orderId = url.searchParams.get("orderId");
@@ -36,8 +22,22 @@ export async function loader({ request }) {
   return json(
     {
       hasReturnInProgress: false,
-      debugOrderId: orderId,
+      orderId,
     },
     { headers: corsHeaders() },
+  );
+}
+
+export async function action({ request }) {
+  if (request.method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: corsHeaders(),
+    });
+  }
+
+  return json(
+    { error: "Method not allowed" },
+    { status: 405, headers: corsHeaders() },
   );
 }
