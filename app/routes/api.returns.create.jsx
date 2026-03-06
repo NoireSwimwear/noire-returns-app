@@ -33,7 +33,6 @@ export async function action({ request }) {
 
   try {
     const body = await request.json();
-
     const { orderId, reason, customerEmail } = body;
 
     if (!orderId) {
@@ -45,7 +44,7 @@ export async function action({ request }) {
 
     const existingReturn = await prisma.returnRequest.findFirst({
       where: {
-        orderId,
+        orderId: String(orderId),
         status: {
           in: [
             "pending",
@@ -74,7 +73,7 @@ export async function action({ request }) {
 
     const returnRequest = await prisma.returnRequest.create({
       data: {
-        orderId,
+        orderId: String(orderId),
         reason: reason || null,
         customerEmail: customerEmail || null,
         status: "pending",
