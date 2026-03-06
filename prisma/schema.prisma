@@ -29,3 +29,15 @@ model Session {
 
   @@index([shop])
 }
+
+model ReturnRequest {
+  id            String   @id @default(cuid())
+  orderId       String
+  status        String   @default("pending")
+  reason        String?
+  customerEmail String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([orderId])
+}

@@ -1,6 +1,6 @@
 // extensions/return-pickup-button/src/OrderStatusBlock.jsx
-
-import { render } from "@shopify/ui-extensions/preact";
+import "@shopify/ui-extensions/preact";
+import { render } from "preact";
 import { useEffect, useMemo, useState } from "preact/hooks";
 
 /** Backend API (Render) */
@@ -9,7 +9,9 @@ const API_BASE = "https://noire-returns-app.onrender.com";
 /** Pagina ta Shopify */
 const PICKUP_PAGE_URL = "https://noire-swimwear.ro/pages/retur-pick-up";
 
-render("customer-account.order-status.block.render", () => <Extension />);
+export default async () => {
+  render(<Extension />, document.body);
+};
 
 function Extension() {
   const shop =
@@ -54,9 +56,7 @@ function Extension() {
           return;
         }
 
-        const url = `${API_BASE}/api/returns/check?orderId=${encodeURIComponent(
-          orderId,
-        )}`;
+        const url = `${API_BASE}/api/returns/check?orderId=${encodeURIComponent(orderId)}`;
 
         const res = await fetch(url, {
           method: "GET",
@@ -67,7 +67,7 @@ function Extension() {
         });
 
         const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error("Request failed");
+        if (!res.ok) throw new Error();
 
         if (!cancelled) {
           setHasReturnInProgress(Boolean(data?.hasReturnInProgress));
@@ -89,9 +89,7 @@ function Extension() {
     window.open(PICKUP_PAGE_URL, "_self");
   };
 
-  if (loading || !isRO || !hasReturnInProgress) {
-    return null;
-  }
+  if (loading || !isRO || !hasReturnInProgress) return null;
 
   return (
     <s-stack
@@ -102,7 +100,6 @@ function Extension() {
     >
       <s-stack gap="base">
         <s-text>Poți programa ridicarea coletului prin Fan Courier.</s-text>
-
         <s-button variant="primary" onClick={handleClick}>
           Programează ridicarea coletului
         </s-button>
