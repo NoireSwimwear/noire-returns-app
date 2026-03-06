@@ -9,6 +9,11 @@ function corsHeaders() {
   };
 }
 
+function normalizeOrderId(orderId) {
+  if (!orderId) return null;
+  return String(orderId).split("/").pop();
+}
+
 export async function action({ request }) {
   if (request.method === "OPTIONS") {
     return new Response(null, {
@@ -26,18 +31,20 @@ export async function action({ request }) {
 export async function loader({ request }) {
   try {
     const url = new URL(request.url);
-    const orderId = url.searchParams.get("orderId");
+    const rawOrderId = url.searchParams.get("orderId");
 
-    if (!orderId) {
+    if (!rawOrderId) {
       return json(
         { error: "Missing orderId" },
         { status: 400, headers: corsHeaders() },
       );
     }
 
+    const normalizedOrderId = normalizeOrderId(rawOrderId);
+
     const returnRequest = await prisma.returnRequest.findFirst({
       where: {
-        orderId: String(orderId),
+        orderId: normalizedOrderId,
         status: {
           in: [
             "pending",
@@ -56,7 +63,8 @@ export async function loader({ request }) {
     return json(
       {
         hasReturnInProgress: Boolean(returnRequest),
-        orderId,
+        orderId: normalizedOrderId,
+        rawOrderId,
       },
       { headers: corsHeaders() },
     );

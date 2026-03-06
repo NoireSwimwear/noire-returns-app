@@ -9,6 +9,11 @@ function corsHeaders() {
   };
 }
 
+function normalizeOrderId(orderId) {
+  if (!orderId) return null;
+  return String(orderId).split("/").pop();
+}
+
 export async function loader() {
   return json(
     { error: "Method not allowed" },
@@ -42,9 +47,11 @@ export async function action({ request }) {
       );
     }
 
+    const normalizedOrderId = normalizeOrderId(orderId);
+
     const existingReturn = await prisma.returnRequest.findFirst({
       where: {
-        orderId: String(orderId),
+        orderId: normalizedOrderId,
         status: {
           in: [
             "pending",
@@ -73,7 +80,7 @@ export async function action({ request }) {
 
     const returnRequest = await prisma.returnRequest.create({
       data: {
-        orderId: String(orderId),
+        orderId: normalizedOrderId,
         reason: reason || null,
         customerEmail: customerEmail || null,
         status: "pending",
